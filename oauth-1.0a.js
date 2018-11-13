@@ -22,7 +22,7 @@ function OAuth(opts) {
     this.consumer            = opts.consumer;
     this.nonce_length        = opts.nonce_length || 32;
     this.version             = opts.version || '1.0';
-    this.parameter_seperator = opts.parameter_seperator || ', ';
+    this.parameter_seperator = opts.parameter_seperator || ',';
     this.realm               = opts.realm;
 
     if(typeof opts.last_ampersand === 'undefined') {
@@ -292,12 +292,14 @@ OAuth.prototype.percentEncodeData = function(data) {
  * @return {String} Header data key - value
  */
 OAuth.prototype.toHeader = function(oauth_data) {
-    var sorted = this.sortObject(oauth_data);
+    var sorted = this.sortObject(oauth_data, true);
 
     var header_value = 'OAuth ';
 
     if (this.realm) {
         header_value += 'realm="' + this.realm + '"' + this.parameter_seperator;
+    } else {
+        header_value += 'realm=""' + this.parameter_seperator;
     }
 
     for(var i = 0; i < sorted.length; i++) {
@@ -370,18 +372,25 @@ var predefinedList = [
  * @param  {Object} data
  * @return {Array} sorted array
  */
-OAuth.prototype.sortObject = function(data) {
-    var keys = predefinedList;
+OAuth.prototype.sortObject = function(data, predefined) {
+    var keys = Object.keys(data);
+    keys.sort();
+
+    if(predefined) {
+        keys = predefinedList;
+    }
+
     var result = [];
 
-//    keys.sort();
 
     for(var i = 0; i < keys.length; i++) {
         var key = keys[i];
-        result.push({
-            key: key,
-            value: data[key],
-        });
+        if ( key in data ) {
+            result.push({
+                key: key,
+                value: data[key],
+            });
+        }   
     }
 
     return result;
