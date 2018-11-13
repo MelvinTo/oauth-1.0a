@@ -354,16 +354,27 @@ OAuth.prototype.mergeObject = function(obj1, obj2) {
     return merged_obj;
 };
 
+
+var predefinedList = [
+    "realm",
+    "oauth_version",
+    "oauth_nonce",
+    "oauth_timestamp",
+    "oauth_consumer_key",
+    "oauth_signature_method",
+    "oauth_signature"
+];
+
 /**
  * Sort object by key
  * @param  {Object} data
  * @return {Array} sorted array
  */
 OAuth.prototype.sortObject = function(data) {
-    var keys = Object.keys(data);
+    var keys = predefinedList;
     var result = [];
 
-    keys.sort();
+//    keys.sort();
 
     for(var i = 0; i < keys.length; i++) {
         var key = keys[i];
